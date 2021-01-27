@@ -109,7 +109,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
  * |------+------+------+------+------+------+------+------+------+------+------+------|
  * |      |      |      |      |      |      |WDLeft|ScrlUp|ScrlDn|WDRight|     |      |      
  * |------+------+------+------+------+------+------+------+------+------+------+------|
- * |      |      |      |      |      |      | Left | DOWN |  UP  |RIGHT |      |      |
+ * |      |      |      |Shift |Layer |      | Left | DOWN |  UP  |RIGHT |      |      |
  * |------+------+------+------+------+------+------+------+------+------+------+------|
  * |      |      |      |      |      |      | Home | PgDn | PgUp | End  |      |      |
  * |------+------+------+------+------+------+------+------+------+------+------+------|
@@ -117,11 +117,11 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
  * `-----------------------------------------------------------------------------------'
  */
 [_MOVEMENT] = LAYOUT_preonic_grid(
-  KC_NO,  KC_NO,  KC_NO,    KC_NO,  KC_NO,    KC_NO,   KC_NO,          KC_NO,          KC_NO,           KC_NO,           KC_NO,        KC_NO,
-  KC_NO,  KC_NO,  KC_NO,    KC_NO,  KC_NO,    KC_NO,   LCTL(KC_LEFT),  LCTL(KC_DOWN),  LCTL(KC_UP),     LCTL(KC_RIGHT),  KC_NO,        KC_NO,
-  KC_NO,  KC_NO,  KC_NO,    KC_NO,  KC_NO,    KC_NO,   KC_LEFT,        KC_DOWN,        KC_UP,           KC_RIGHT,        KC_NO,        KC_NO,
-  KC_NO,  KC_NO,  KC_NO,    KC_NO,  KC_NO,    KC_NO,   KC_HOME,        KC_PGDN,        KC_PGUP,         KC_END,          KC_NO,        KC_NO,
-  KC_NO,  KC_NO,  KC_NO,    KC_NO,  KC_NO,    KC_NO,   KC_NO,          KC_NO,          KC_NO,           KC_NO,           KC_NO,        KC_NO
+  KC_NO,  KC_NO,  KC_NO,    KC_NO,   KC_NO,    KC_NO,   KC_NO,          KC_NO,          KC_NO,           KC_NO,           KC_NO,        KC_NO,
+  KC_NO,  KC_NO,  KC_NO,    KC_NO,   KC_NO,    KC_NO,   LCTL(KC_LEFT),  LCTL(KC_DOWN),  LCTL(KC_UP),     LCTL(KC_RIGHT),  KC_NO,        KC_NO,
+  KC_NO,  KC_NO,  KC_NO,    KC_LSFT, KC_TRNS,  KC_NO,   KC_LEFT,        KC_DOWN,        KC_UP,           KC_RIGHT,        KC_NO,        KC_NO,
+  KC_NO,  KC_NO,  KC_NO,    KC_NO,   KC_NO,    KC_NO,   KC_HOME,        KC_PGDN,        KC_PGUP,         KC_END,          KC_NO,        KC_NO,
+  KC_NO,  KC_NO,  KC_NO,    KC_NO,   KC_NO,    KC_NO,   KC_NO,          KC_NO,          KC_NO,           KC_NO,           KC_NO,        KC_NO
 ),
 
 /* Shortcuts 3
@@ -155,18 +155,18 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
  * |------+------+------+------+------+------+------+------+------+------+------+------|
  * |      |   ?  |      |  (   |   )  |      |      |   4  |   5  |   6  |   +  |  *   |
  * |------+------+------+------+------+------+------+------+------+------+------+------|
- * |      |      |      |  {[  |  ]}  |      |      |   1  |   2  |   3  |   =  |  ^   |     
+ * |      |  %>% |  <-  |  {[  |  ]}  |      |      |   1  |   2  |   3  |   =  |  ^   |     
  * |------+------+------+------+------+------+------+------+------+------+------+------|
  * |      |      |      |      |      |             |Adj/O |   .  |   ,  |   %  |End   | 
  * `-----------------------------------------------------------------------------------'
  */
 
 [_LOWER] = LAYOUT_preonic_grid(
-  KC_TILD, KC_EXLM,      KC_AT,     KC_HASH, KC_DLR,    KC_PERC, KC_AMPR,   KC_SLSH,     KC_CIRC, KC_LPRN, KC_RPRN,  KC_BSPC,
-  KC_TILD, KC_EXLM,      KC_AT,     KC_HASH, KC_DLR,    KC_PERC, KC_AMPR,   KC_P7,       KC_P8,   KC_P9,   KC_MINUS, KC_SLASH,
-  _______, KC_QUES,      KC_NO,     KC_LPRN, KC_RPRN,   KC_NO,   KC_NO,     KC_P4,       KC_P5,   KC_P6,   KC_PLUS,  KC_PAST,
-  _______, KC_NO,        KC_NO,     KC_LBRC, KC_RBRC,   KC_NO,   KC_NO,     KC_P1,       KC_P2,   KC_P3,   KC_EQUAL, KC_CIRC,
-  _______, _______,      _______,   _______, _______,   _______, _______,   LT(6,KC_P0), KC_DOT,  KC_COMM, KC_PERC,  KC_END
+  KC_TILD, KC_EXLM,      KC_AT,      KC_HASH, KC_DLR,    KC_PERC, KC_AMPR,   KC_SLSH,     KC_CIRC, KC_LPRN, KC_RPRN,  KC_BSPC,
+  KC_TILD, KC_EXLM,      KC_AT,      KC_HASH, KC_DLR,    KC_PERC, KC_AMPR,   KC_P7,       KC_P8,   KC_P9,   KC_MINUS, KC_SLASH,
+  _______, KC_QUES,      KC_NO,      KC_LPRN, KC_RPRN,   KC_NO,   KC_NO,     KC_P4,       KC_P5,   KC_P6,   KC_PLUS,  KC_PAST,
+  _______, RCS(KC_M),    A(KC_MINS), KC_LBRC, KC_RBRC,   KC_NO,   KC_NO,     KC_P1,       KC_P2,   KC_P3,   KC_EQUAL, KC_CIRC,
+  _______, _______,      _______,    _______, _______,   _______, _______,   LT(6,KC_P0), KC_DOT,  KC_COMM, KC_PERC,  KC_END
 ),
 
 /* Raise 5
