@@ -197,9 +197,9 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
  * |------+------+------+------+------+------+------+------+------+------+------+------|
  * |      | Reset|Debug |      |      |      |      |      |      |      |      |  Del |
  * |------+------+------+------+------+-------------+------+------+------+------+------|
- * |      |      |      |Aud on|AudOff|AGnorm|AGswap|Qwerty|Colemk|Numpad|      |      |
+ * |      |      |MU_MOD|AU_ON |AU_OFF|      |      |Qwerty|Colemk|Numpad|      |      |
  * |------+------+------+------+------+------|------+------+------+------+------+------|
- * |      |Voice-|Voice+|Mus on|MusOff|MidiOn|MidOff|NumLoc|      |      |      |      |
+ * |      |MUV_DE|MUV_IN|Mus on|MusOff|MI_ON |MI_OFF|NumLoc|      |      |      |      |
  * |------+------+------+------+------+------+------+------+------+------+------+------|
  * |      |      |      |      |      |             |      |      |      |      |      |
  * `-----------------------------------------------------------------------------------'
@@ -207,13 +207,14 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 [_ADJUST] = LAYOUT_preonic_grid(
   KC_F1,   KC_F2,   KC_F3,    KC_F4,   KC_F5,     KC_F6,   KC_F7,   KC_F8,   KC_F9,    KC_F10,  KC_F11, KC_F12,
   KC_NO,   RESET,   DEBUG,    KC_NO,   KC_NO,     KC_NO,   KC_NO,   RGB_M_R, RGB_M_SW, RGB_M_SN,RGB_M_K,KC_DEL,
-  KC_NO,   KC_NO,   MU_MOD,   AU_ON,   AU_OFF,    AG_NORM, AG_SWAP, QWERTY,  COLEMAK,  KC_NO,   KC_NO,  KC_NO,
-  KC_NO,   MUV_DE,  MUV_IN,   MU_ON,   MU_OFF,    MI_ON,   MI_OFF,  KC_NLCK, KC_NO,    KC_NO,   KC_NO,  KC_NO,
+  KC_NO,   KC_NO,   KC_NO,    KC_NO,   KC_NO,     KC_NO,   KC_NO,   QWERTY,  COLEMAK,  KC_NO,   KC_NO,  KC_NO,
+  KC_NO,   KC_NO,   KC_NO,    MU_ON,   MU_OFF,    KC_NO,   KC_NO,   KC_NLCK, KC_NO,    KC_NO,   KC_NO,  KC_NO,
   KC_NO,   KC_NO,   KC_NO,    KC_NO,   KC_TRNS,   KC_NO,   KC_NO,   KC_TRNS, KC_NO,    KC_NO,   KC_NO,  KC_NO
 )
 
 
 };
+
 
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
   switch (keycode) {
@@ -226,26 +227,6 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
         case COLEMAK:
           if (record->event.pressed) {
             set_single_persistent_default_layer(_COLEMAK);
-          }
-          return false;
-          break;
-        case LOWER:
-          if (record->event.pressed) {
-            layer_on(_LOWER);
-            update_tri_layer(_LOWER, _RAISE, _ADJUST);
-          } else {
-            layer_off(_LOWER);
-            update_tri_layer(_LOWER, _RAISE, _ADJUST);
-          }
-          return false;
-          break;
-        case RAISE:
-          if (record->event.pressed) {
-            layer_on(_RAISE);
-            update_tri_layer(_LOWER, _RAISE, _ADJUST);
-          } else {
-            layer_off(_RAISE);
-            update_tri_layer(_LOWER, _RAISE, _ADJUST);
           }
           return false;
           break;
@@ -271,42 +252,7 @@ uint16_t get_tapping_term(uint16_t keycode, keyrecord_t *record) {
 
 
 
-#define NUMLOCOFF Q__NOTE(_B5), Q__NOTE(_E5),
-#define NUMLOCON Q__NOTE(_E5), Q__NOTE(_B5), Q__NOTE(_E5), Q__NOTE(_B5),
-
-#ifdef AUDIO_ENABLE
-
-float tone_numlk_on[][2]   = SONG(NUMLOCON);
-float tone_numlk_off[][2]  = SONG(NUMLOCOFF);
-
-
-#endif /* AUDIO_ENABLE */
-
-
-
-
-bool muse_mode = false;
-uint8_t last_muse_note = 0;
-uint16_t muse_counter = 0;
-uint8_t muse_offset = 70;
-uint16_t muse_tempo = 50;
-
 void encoder_update_user(uint8_t index, bool clockwise) {
-  if (muse_mode) {
-    if (IS_LAYER_ON(_RAISE)) {
-      if (clockwise) {
-        muse_offset++;
-      } else {
-        muse_offset--;
-      }
-    } else {
-      if (clockwise) {
-        muse_tempo+=1;
-      } else {
-        muse_tempo-=1;
-      }
-    }
-  } else {
     if (clockwise) {
       register_code(KC_PGDN);
       unregister_code(KC_PGDN);
@@ -314,62 +260,17 @@ void encoder_update_user(uint8_t index, bool clockwise) {
       register_code(KC_PGUP);
       unregister_code(KC_PGUP);
     }
-  }
-}
-
-void dip_switch_update_user(uint8_t index, bool active) {
-    switch (index) {
-        case 0:
-            if (active) {
-                layer_on(_ADJUST);
-            } else {
-                layer_off(_ADJUST);
-            }
-            break;
-        case 1:
-            if (active) {
-                muse_mode = true;
-            } else {
-                muse_mode = false;
-            }
-    }
 }
 
 
-
-void matrix_scan_user(void) {
-#ifdef AUDIO_ENABLE
-    if (muse_mode) {
-        if (muse_counter == 0) {
-            uint8_t muse_note = muse_offset + SCALE[muse_clock_pulse()];
-            if (muse_note != last_muse_note) {
-                stop_note(compute_freq_for_midi_note(last_muse_note));
-                play_note(compute_freq_for_midi_note(muse_note), 0xF);
-                last_muse_note = muse_note;
-            }
-        }
-        muse_counter = (muse_counter + 1) % muse_tempo;
-    } else {
-        if (muse_counter) {
-            stop_all_notes();
-            muse_counter = 0;
-        }
-    }
-#endif
-}
-
-bool music_mask_user(uint16_t keycode) {
-  switch (keycode) {
-    case RAISE:
-    case LOWER:
-      return false;
-    default:
-      return true;
-  }
-}
+#define NUMLOCOFF Q__NOTE(_B5), Q__NOTE(_E5),
+#define NUMLOCON Q__NOTE(_E5), Q__NOTE(_B5), Q__NOTE(_E5), Q__NOTE(_B5),
 
 
 #ifdef AUDIO_ENABLE
+
+float tone_numlk_on[][2]   = SONG(NUMLOCON);
+float tone_numlk_off[][2]  = SONG(NUMLOCOFF);
 
 void matrix_init_user(void)
 {
@@ -386,12 +287,12 @@ void led_set_user(uint8_t usb_led)
     {
         if ((usb_led & (1<<USB_LED_NUM_LOCK)) && !(old_usb_led & (1<<USB_LED_NUM_LOCK)))
         {
-                // If NUM LK LED is turning on...
+                /* If NUM LK LED is turning on... */
                 PLAY_SONG(tone_numlk_on);
         }
         else if (!(usb_led & (1<<USB_LED_NUM_LOCK)) && (old_usb_led & (1<<USB_LED_NUM_LOCK)))
         {
-                // If NUM LED is turning off...
+                /* If NUM LED is turning off...  */
                 PLAY_SONG(tone_numlk_off);
         }
     }

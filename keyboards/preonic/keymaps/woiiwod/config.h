@@ -39,3 +39,9 @@
 #define TAPPING_TERM 150
 
 #define TAPPING_TERM_PER_KEY
+
+//Rotary encoder
+
+#define ENCODER_RESOLUTION 2 
+
+#define TAP_CODE_DELAY 10
